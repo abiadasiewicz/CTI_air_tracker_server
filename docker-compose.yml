@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:15
+    container_name: CTI_db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: CTI_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d
+
+  app:
+    build: .
+    container_name: CTI_app
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://user:password@db/CTI_db
+    ports:
+      - "8000:8000"
+
+volumes:
+  postgres_data:
